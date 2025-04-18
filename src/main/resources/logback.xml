@@ -19,15 +19,12 @@
         </encoder>
     </appender>
 
-    <!-- Set default logging level -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
 
-    <!-- Application specific logging -->
-    <logger name="ca.bazlur" level="DEBUG" />
+    <logger name="ca.bazlur" level="INFO" />
     
-    <!-- Third-party library logging -->
     <logger name="dev.langchain4j" level="INFO" />
 </configuration>

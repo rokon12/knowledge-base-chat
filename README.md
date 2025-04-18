@@ -114,17 +114,36 @@ knowledge-base-chat/
 │   │   │   └── ca/
 │   │   │       └── bazlur/
 │   │   │           ├── KnowledgeAssistant.java
-│   │   │           └── KnowledgeBaseIngestor.java
+│   │   │           ├── config/
+│   │   │           │   ├── AppConfig.java
+│   │   │           │   └── ConfigProvider.java
+│   │   │           └── service/
+│   │   │               ├── AssistantService.java
+│   │   │               └── KnowledgeBaseService.java
 │   │   └── resources/
+│   │       ├── application.properties
 │   │       ├── components.txt
 │   │       ├── knowledge.txt
 │   │       └── logback.xml
+│   └── test/
+│       └── java/
+│           └── ca/
+│               └── bazlur/
+│                   ├── config/
+│                   │   └── AppConfigTest.java
+│                   └── service/
+│                       ├── AssistantServiceTest.java
+│                       └── KnowledgeBaseServiceTest.java
 ├── pom.xml
 └── README.md
 ```
 
 - `KnowledgeAssistant.java`: Main class that handles the chat interface
-- `KnowledgeBaseIngestor.java`: Loads and processes the knowledge base data
+- `config/AppConfig.java`: Provides application configuration from properties file
+- `config/ConfigProvider.java`: Interface for configuration values to enable dependency injection
+- `service/AssistantService.java`: Service that handles the assistant functionality
+- `service/KnowledgeBaseService.java`: Service that loads and processes the knowledge base data
+- `application.properties`: Configuration file for the application
 - `components.txt`: Contains information about system components
 - `knowledge.txt`: Contains events, rules, maintenance notes, and safety procedures
 - `logback.xml`: Logging configuration

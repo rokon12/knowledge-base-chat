@@ -1,4 +1,4 @@
-package ca.bazlur;
+package ca.bazlur.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +9,13 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AppConfig {
+/**
+ * Application configuration provider that loads settings from application.properties.
+ * Implements the ConfigProvider interface for dependency injection.
+ */
+public class AppConfig implements ConfigProvider {
     private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
-    private static final Properties properties = new Properties();
-    private static final AppConfig INSTANCE = new AppConfig();
+    private final Properties properties;
 
     private static final Pattern ENV_VAR_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
 
@@ -25,8 +28,52 @@ public class AppConfig {
     private static final int DEFAULT_CHUNK_OVERLAP = 30;
     private static final String DEFAULT_API_KEY = "demo";
 
-    static {
-        try (InputStream input = AppConfig.class.getClassLoader().getResourceAsStream("application.properties")) {
+    // Singleton instance for backward compatibility
+    private static final AppConfig INSTANCE = new AppConfig();
+
+    /**
+     * Creates a new AppConfig instance with the given properties.
+     * This constructor is package-private for testing.
+     *
+     * @param properties The properties to use
+     */
+    AppConfig(Properties properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Creates a new AppConfig instance with properties loaded from application.properties.
+     */
+    private AppConfig() {
+        this.properties = new Properties();
+        loadProperties();
+    }
+
+    /**
+     * Gets the singleton instance of AppConfig.
+     * This method is provided for backward compatibility.
+     *
+     * @return The singleton instance
+     */
+    public static AppConfig getInstance() {
+        return INSTANCE;
+    }
+
+    /**
+     * Creates a new AppConfig instance with properties loaded from application.properties.
+     * This factory method allows for creating new instances for testing.
+     *
+     * @return A new AppConfig instance
+     */
+    public static ConfigProvider create() {
+        return new AppConfig();
+    }
+
+    /**
+     * Loads properties from application.properties.
+     */
+    private void loadProperties() {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
             if (input != null) {
                 properties.load(input);
                 logger.info("Loaded configuration from application.properties");
@@ -38,22 +85,17 @@ public class AppConfig {
         }
     }
 
-    private AppConfig() {
-    }
-
-    public static AppConfig getInstance() {
-        return INSTANCE;
-    }
-
-
+    @Override
     public String getChatModelName() {
         return getProperty("openai.chat.model", DEFAULT_CHAT_MODEL);
     }
 
+    @Override
     public String getEmbeddingModelName() {
         return getProperty("openai.embedding.model", DEFAULT_EMBEDDING_MODEL);
     }
 
+    @Override
     public String getApiKey() {
         String apiKey = getProperty("openai.api.key", DEFAULT_API_KEY);
         if (DEFAULT_API_KEY.equals(apiKey)) {
@@ -66,34 +108,40 @@ public class AppConfig {
         return apiKey;
     }
 
+    @Override
     public int getMaxResults() {
         return getIntProperty("retriever.max.results", DEFAULT_MAX_RESULTS);
     }
 
+    @Override
     public double getMinScore() {
         return getDoubleProperty("retriever.min.score", DEFAULT_MIN_SCORE);
     }
 
+    @Override
     public int getChatMemoryMessages() {
         return getIntProperty("chat.memory.messages", DEFAULT_CHAT_MEMORY_MESSAGES);
     }
 
+    @Override
     public int getChunkSize() {
         return getIntProperty("document.chunk.size", DEFAULT_CHUNK_SIZE);
     }
 
+    @Override
     public int getChunkOverlap() {
         return getIntProperty("document.chunk.overlap", DEFAULT_CHUNK_OVERLAP);
     }
 
+    @Override
     public boolean isLogRequests() {
         return getBooleanProperty("openai.log.requests", false);
     }
 
+    @Override
     public boolean isLogResponses() {
         return getBooleanProperty("openai.log.responses", false);
     }
-
 
     /**
      * Resolves a value, checking for environment variable placeholders like ${VAR_NAME}.

@@ -1,96 +1,105 @@
 package ca.bazlur;
 
+import ca.bazlur.config.AppConfig;
+import ca.bazlur.config.ConfigProvider;
+import ca.bazlur.service.AssistantService;
+import ca.bazlur.service.KnowledgeBaseService;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.memory.ChatMemory;
-import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
-import dev.langchain4j.rag.content.retriever.ContentRetriever;
-import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
-import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
+/**
+ * Main class for the Knowledge Assistant application. Handles the user interface and coordinates
+ * the services.
+ */
 public class KnowledgeAssistant {
 
   private static final Logger logger = LoggerFactory.getLogger(KnowledgeAssistant.class);
 
-  interface Assistant {
-    String chat(String userMessage);
-  }
-
   public static void main(String[] args) {
     try {
-      EmbeddingStore<TextSegment> embeddingStore = KnowledgeBaseIngestor.ingestData();
+      ConfigProvider config = AppConfig.create();
+      logger.info("Configuration initialized");
 
-      logger.info("Initializing OpenAI Chat Model...");
-      AppConfig config = AppConfig.getInstance();
-      ChatLanguageModel chatModel = OpenAiChatModel.builder()
-              .apiKey(config.getApiKey())
-              .modelName(config.getChatModelName())
-              .logRequests(config.isLogRequests())
-              .logResponses(config.isLogResponses())
-              .build();
+      logger.info("Loading knowledge base...");
+      KnowledgeBaseService knowledgeBaseService = new KnowledgeBaseService(config);
+      EmbeddingStore<TextSegment> embeddingStore = knowledgeBaseService.loadKnowledgeBase();
+      logger.info("Knowledge base loaded");
 
-      EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
-              .apiKey(config.getApiKey())
-              .modelName(config.getEmbeddingModelName())
-              .logRequests(config.isLogRequests())
-              .logResponses(config.isLogResponses())
-              .build();
+      logger.info("Initializing assistant service...");
+      AssistantService assistantService = new AssistantService(config, embeddingStore);
+      logger.info("Assistant service initialized");
 
-      logger.info("Chat Model initialized.");
-
-
-      logger.info("Initializing Content Retriever...");
-      ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
-              .embeddingStore(embeddingStore)
-              .embeddingModel(embeddingModel)
-              .maxResults(config.getMaxResults())
-              .minScore(config.getMinScore())
-              .build();
-      logger.info("Content Retriever configured with maxResults={}, minScore={}", 
-              config.getMaxResults(), config.getMinScore());
-      logger.info("Content Retriever initialized.");
-
-      ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(config.getChatMemoryMessages());
-      logger.info("Chat Memory initialized (window size {}).", config.getChatMemoryMessages());
-
-      logger.info("Creating AI Service...");
-      Assistant assistant = AiServices.builder(Assistant.class)
-              .chatLanguageModel(chatModel)
-              .contentRetriever(contentRetriever)
-              .chatMemory(chatMemory)
-              .build();
-      logger.info("AI Service created. Assistant is ready.");
-
-      Scanner scanner = new Scanner(System.in);
-      logger.info("Assistant is ready to chat");
-      System.out.println("\nAssistant: Hello! Ask me about the system components or known issues.");
-
-      while (true) {
-        System.out.print("You: ");
-        String userQuery = scanner.nextLine();
-
-        if ("exit".equalsIgnoreCase(userQuery)) {
-          logger.info("User requested to exit");
-          System.out.println("Assistant: Goodbye!");
-          break;
-        }
-
-        logger.debug("Processing user query: {}", userQuery);
-        String assistantResponse = assistant.chat(userQuery);
-        System.out.println("Assistant: \n" + assistantResponse);
-      }
-      scanner.close();
+      runChatInterface(assistantService);
 
     } catch (Exception e) {
       logger.error("An error occurred during assistant setup or chat", e);
+      System.err.println("Error: " + e.getMessage());
+      System.err.println("Please check the logs for more details.");
     }
+  }
+
+  /**
+   * Runs the interactive chat interface for interacting with the assistant.
+   *
+   * @param assistantService The assistant service to use
+   */
+  private static void runChatInterface(AssistantService assistantService) {
+    Scanner scanner = new Scanner(System.in);
+    logger.info("Starting chat interface");
+
+    System.out.println("\n======================================");
+    System.out.println("     Welcome to Knowledge Assistant");
+    System.out.println("======================================");
+    System.out.println("Ask me anything based on my knowledge.");
+    System.out.println("Type 'help' for commands or 'exit' to quit.\n");
+
+    while (true) {
+      System.out.print("\nYou: ");
+      String userQuery = scanner.nextLine().trim();
+
+      if (userQuery.isEmpty()) {
+        System.out.println("\nAssistant: Please type a question or command ('help'/'exit').");
+        continue;
+      }
+
+      if ("help".equalsIgnoreCase(userQuery)) {
+        printHelp();
+        continue;
+      }
+
+      if ("exit".equalsIgnoreCase(userQuery)) {
+        logger.info("User requested to exit");
+        System.out.println(
+            "\nAssistant: Goodbye! It was nice chatting with you."); // Friendlier exit
+        break;
+      }
+
+      try {
+        logger.debug("Processing user query: {}", userQuery);
+        System.out.println("\nAssistant: Thinking...");
+        String assistantResponse = assistantService.processMessage(userQuery);
+        System.out.println("\nAssistant:\n");
+        System.out.println(assistantResponse);
+      } catch (Exception e) {
+        logger.error("Error processing query '{}'", userQuery, e); // Log the query that failed
+        System.out.println("\nAssistant: I'm sorry, I encountered an error trying to respond.");
+        System.out.println(
+            "             Please try rephrasing your question or ask something else.");
+      }
+    }
+
+    scanner.close();
+    logger.info("Chat interface closed");
+  }
+
+  private static void printHelp() {
+    System.out.println("\nAssistant: How I can help:");
+    System.out.println("  - Ask any question based on the loaded knowledge.");
+    System.out.println("  - Type 'help' to see this message again.");
+    System.out.println("  - Type 'exit' to quit the application.");
   }
 }

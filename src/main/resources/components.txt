@@ -30,3 +30,16 @@ Component ID: PROCESS-UNIT-001. Type: Reaction Vessel. Status: Operating. Connec
 Component ID: PIPE-011. Type: Stainless Steel Pipe. Status: Operational. Connected to: PROCESS-UNIT-001, VALVE-006. Location: Sector F.
 Component ID: VALVE-006. Type: Ball Valve. Status: Open. Connected to: PIPE-011, TANK-C. Location: Sector F.
 Component ID: TANK-C. Type: Product Storage Tank. Status: In Service. Connected to: VALVE-006. Location: Sector F.
+Component ID: PUMP-001. Type: Centrifugal Pump. Status: Running - Alert. Connected to: VALVE-001, PIPE-002. Location: Sector A.
+Component ID: SENSOR-T1. Type: Temperature Sensor. Monitors: PUMP-001 Casing. Reading: 115C. Unit: Celsius. Location: Sector A.
+Component ID: MOTOR-001. Type: Electric Motor. Status: Running - High Current Draw. Drives: PUMP-001. Location: Sector A.
+Component ID: SENSOR-P1. Type: Pressure Sensor. Monitors: PIPE-002. Reading: -999. Unit: PSI. Location: Sector B. Status: Failed - Error Reading.
+Component ID: VALVE-002. Type: Ball Valve. Status: Stuck Closed. Connected to: PUMP-002, TANK-A. Location: Sector B.
+Component ID: PUMP-002. Type: Centrifugal Pump. Status: Running - Low Flow Detected. Connected to: VALVE-002, PIPE-003. Location: Sector B.
+Component ID: SENSOR-F1. Type: Flow Sensor. Monitors: PIPE-003. Reading: 2. Unit: GPM. Location: Sector B.
+Component ID: PIPE-004. Type: Insulated Pipe. Status: Leaking. Connected to: VALVE-003, HEAT-EXCHANGER-001. Location: Sectors A-C.
+Component ID: PUMP-003. Type: Centrifugal Pump. Status: Failed to Start. Connected to: PIPE-006, PIPE-007. Location: Sector D.
+Component ID: HEATER-001. Type: Electric Heater. Status: Failed - Offline. Heats: TANK-A. Power: 0kW. Location: Sector A.
+Component ID: SENSOR-T2. Type: Temperature Sensor. Monitors: TANK-A Interior. Reading: 40C. Unit: Celsius. Location: Sector A.
+Component ID: VALVE-005. Type: Control Valve. Status: Oscillating. Connected to: PIPE-009, PIPE-010. Location: Sector E.
+Component ID: PROCESS-UNIT-001. Type: Reaction Vessel. Status: Operating - Unstable Input. Connected to: PIPE-010, PIPE-011. Location: Sector F.
