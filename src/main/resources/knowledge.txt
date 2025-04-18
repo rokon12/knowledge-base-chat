@@ -1,0 +1,36 @@
+Fault ID: F001. Description: High Temperature on PUMP-001. Possible Causes: Low lubrication, bearing wear, blocked outlet VALVE-001. Recommended Action: Check lubrication levels and bearing condition.
+Event ID: E001. Description: Pressure drop in PIPE-002 below 100 PSI. Related Components: PUMP-001, VALVE-001, SENSOR-P1. Possible Causes: Leak in PIPE-002, PUMP-001 failure, VALVE-001 partially closed.
+Rule ID: R001. Condition: If SENSOR-T1 reading > 80C. Action: Generate HIGH_TEMP_ALERT for PUMP-001. Priority: High.
+Maintenance Note M001: PUMP-001 bearings last replaced 6 months ago. Next inspection due in 1 month.
+Safety Procedure S001: Before servicing PUMP-001, ensure MOTOR-001 is locked out and VALVE-001 is closed.
+Fault ID: F002. Description: Vibration detected on MOTOR-001. Possible Causes: Misalignment, unbalanced rotor, loose mounting. Recommended Action: Check alignment and mounting bolts, inspect rotor balance.
+Event ID: E002. Description: Flow rate in PIPE-003 below 50 GPM. Related Components: PUMP-002, VALVE-002, SENSOR-F1. Possible Causes: Obstruction in PIPE-003, PUMP-002 cavitation, VALVE-002 partially closed.
+Rule ID: R002. Condition: If SENSOR-P1 reading < 90 PSI. Action: Generate LOW_PRESSURE_ALERT for PIPE-002. Priority: Medium.
+Maintenance Note M002: VALVE-001 last inspected 3 months ago. Next maintenance scheduled in 2 months.
+Safety Procedure S002: Before entering TANK-A, ensure VALVE-001 and VALVE-002 are closed and locked, and oxygen levels are verified safe.
+Fault ID: F003. Description: Unusual noise from PUMP-002. Possible Causes: Cavitation, foreign object, damaged impeller. Recommended Action: Inspect impeller and check suction conditions.
+Event ID: E003. Description: Temperature spike in TANK-A above 65C. Related Components: HEATER-001, SENSOR-T2, VALVE-003. Possible Causes: HEATER-001 malfunction, cooling system failure, VALVE-003 closed.
+Rule ID: R003. Condition: If SENSOR-F1 reading < 45 GPM for > 5 minutes. Action: Generate LOW_FLOW_ALERT for PUMP-002. Priority: High.
+Maintenance Note M003: MOTOR-001 brushes replaced 2 months ago. Next electrical inspection due in 4 months.
+Safety Procedure S003: When working on HEATER-001, ensure power is disconnected and temperature of TANK-A is below 40C.
+Fault ID: F004. Description: Leakage detected at HEAT-EXCHANGER-001. Possible Causes: Gasket failure, plate damage, excessive pressure. Recommended Action: Inspect plates and gaskets, check operating pressure.
+Event ID: E004. Description: Differential pressure across HEAT-EXCHANGER-001 above 15 PSI. Related Components: HEAT-EXCHANGER-001, PIPE-004, PIPE-005. Possible Causes: Fouling, scaling, partial blockage.
+Rule ID: R004. Condition: If SENSOR-T2 reading > 70C for > 10 minutes. Action: Generate TANK_OVERTEMP_ALERT for TANK-A. Priority: High.
+Maintenance Note M004: HEAT-EXCHANGER-001 plates cleaned 4 months ago. Next cleaning scheduled in 2 months.
+Safety Procedure S004: Before opening HEAT-EXCHANGER-001, ensure PIPE-004 and PIPE-005 are isolated and pressure is released.
+Fault ID: F005. Description: Control failure on VALVE-003. Possible Causes: Actuator malfunction, control signal loss, mechanical binding. Recommended Action: Check actuator, control signal, and valve stem.
+Event ID: E005. Description: Water quality in COOLING-TOWER-001 outside specification. Related Components: COOLING-TOWER-001, PIPE-005, PIPE-006. Possible Causes: Biofouling, improper chemical treatment, excessive evaporation.
+Rule ID: R005. Condition: If COOLING-TOWER-001 fan current > 15A. Action: Generate FAN_OVERLOAD_ALERT for COOLING-TOWER-001. Priority: Medium.
+Maintenance Note M005: COOLING-TOWER-001 fill media replaced 12 months ago. Next inspection due in 3 months.
+Safety Procedure S005: When working on COOLING-TOWER-001 fan, ensure power is locked out and fan blades are secured against rotation.
+Fault ID: F006. Description: Failed to start PUMP-003. Possible Causes: Power supply issue, motor failure, seized impeller. Recommended Action: Check power supply, motor windings, and manually rotate pump shaft.
+Event ID: E006. Description: Low level in TANK-B below 20%. Related Components: TANK-B, PIPE-007, VALVE-004. Possible Causes: Upstream supply issue, VALVE-004 open too wide, leak in TANK-B.
+Rule ID: R006. Condition: If TANK-B level < 15%. Action: Generate LOW_LEVEL_ALERT for TANK-B and start PUMP-003. Priority: High.
+Maintenance Note M006: VALVE-004 actuator calibrated 2 months ago. Next calibration due in 10 months.
+Safety Procedure S006: Before entering TANK-B, ensure VALVE-004 is closed and locked, tank is drained, and atmosphere is tested for oxygen content.
+Fault ID: F007. Description: Excessive temperature at HEAT-EXCHANGER-002 outlet. Possible Causes: Insufficient cooling water flow, fouling, process fluid overheating. Recommended Action: Check cooling water flow, clean heat exchanger if necessary.
+Event ID: E007. Description: Abnormal pressure fluctuations in PIPE-010. Related Components: VALVE-005, PIPE-010, PROCESS-UNIT-001. Possible Causes: VALVE-005 hunting, upstream pressure variations, PROCESS-UNIT-001 reaction instability.
+Rule ID: R007. Condition: If PROCESS-UNIT-001 pressure > 250 PSI. Action: Generate HIGH_PRESSURE_ALERT for PROCESS-UNIT-001 and open VALVE-006. Priority: Critical.
+Maintenance Note M007: PROCESS-UNIT-001 catalyst replaced 3 months ago. Efficiency currently at 92%. Next replacement scheduled when efficiency drops below 85%.
+Safety Procedure S007: Before maintenance on PROCESS-UNIT-001, ensure all connected lines are purged with nitrogen and vessel is depressurized.
+Fault ID: F008. Description: Product quality deviation in TANK-C. Possible Causes: Process parameter drift, contamination, improper mixing. Recommended Action: Sample product, check process parameters, inspect for contamination sources.

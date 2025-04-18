@@ -1,0 +1,32 @@
+Component ID: PUMP-001. Type: Centrifugal Pump. Status: Running. Connected to: VALVE-001, PIPE-002. Location: Sector A.
+Component ID: VALVE-001. Type: Gate Valve. Status: Open. Connected to: PUMP-001, TANK-A. Location: Sector A.
+Component ID: SENSOR-T1. Type: Temperature Sensor. Monitors: PUMP-001 Casing. Reading: 65C. Unit: Celsius. Location: Sector A.
+Component ID: SENSOR-P1. Type: Pressure Sensor. Monitors: PIPE-002. Reading: 150. Unit: PSI. Location: Sector B.
+Component ID: MOTOR-001. Type: Electric Motor. Status: Running. Drives: PUMP-001. Location: Sector A.
+Component ID: PUMP-002. Type: Centrifugal Pump. Status: Running. Connected to: VALVE-002, PIPE-003. Location: Sector B.
+Component ID: VALVE-002. Type: Ball Valve. Status: Open. Connected to: PUMP-002, TANK-A. Location: Sector B.
+Component ID: VALVE-003. Type: Control Valve. Status: Modulating. Connected to: TANK-A, PIPE-004. Location: Sector A.
+Component ID: PIPE-002. Type: Carbon Steel Pipe. Status: Operational. Connected to: PUMP-001, SENSOR-P1. Location: Sectors A-B.
+Component ID: PIPE-003. Type: Stainless Steel Pipe. Status: Operational. Connected to: PUMP-002, SENSOR-F1. Location: Sector B.
+Component ID: SENSOR-F1. Type: Flow Sensor. Monitors: PIPE-003. Reading: 48. Unit: GPM. Location: Sector B.
+Component ID: SENSOR-T2. Type: Temperature Sensor. Monitors: TANK-A Interior. Reading: 62C. Unit: Celsius. Location: Sector A.
+Component ID: TANK-A. Type: Storage Tank. Status: In Service. Connected to: VALVE-001, VALVE-002, VALVE-003. Location: Sector A.
+Component ID: HEATER-001. Type: Electric Heater. Status: Active. Heats: TANK-A. Power: 25kW. Location: Sector A.
+Component ID: PIPE-004. Type: Insulated Pipe. Status: Operational. Connected to: VALVE-003, HEAT-EXCHANGER-001. Location: Sectors A-C.
+Component ID: HEAT-EXCHANGER-001. Type: Plate Heat Exchanger. Status: Operational. Connected to: PIPE-004, PIPE-005. Location: Sector C.
+Component ID: PIPE-005. Type: Stainless Steel Pipe. Status: Operational. Connected to: HEAT-EXCHANGER-001, COOLING-TOWER-001. Location: Sectors C-D.
+Component ID: COOLING-TOWER-001. Type: Induced Draft Tower. Status: Operational. Connected to: PIPE-005, PIPE-006. Location: Sector D.
+Component ID: PIPE-006. Type: PVC Pipe. Status: Operational. Connected to: COOLING-TOWER-001, PUMP-003. Location: Sector D.
+Component ID: PUMP-003. Type: Centrifugal Pump. Status: Standby. Connected to: PIPE-006, PIPE-007. Location: Sector D.
+Component ID: PIPE-007. Type: PVC Pipe. Status: Operational. Connected to: PUMP-003, TANK-B. Location: Sectors D-E.
+Component ID: TANK-B. Type: Buffer Tank. Status: In Service. Connected to: PIPE-007, VALVE-004. Location: Sector E.
+Component ID: VALVE-004. Type: Butterfly Valve. Status: Open. Connected to: TANK-B, PIPE-008. Location: Sector E.
+Component ID: PIPE-008. Type: Carbon Steel Pipe. Status: Operational. Connected to: VALVE-004, HEAT-EXCHANGER-002. Location: Sector E.
+Component ID: HEAT-EXCHANGER-002. Type: Shell and Tube. Status: Operational. Connected to: PIPE-008, PIPE-009. Location: Sector E.
+Component ID: PIPE-009. Type: Carbon Steel Pipe. Status: Operational. Connected to: HEAT-EXCHANGER-002, VALVE-005. Location: Sector E.
+Component ID: VALVE-005. Type: Control Valve. Status: Modulating. Connected to: PIPE-009, PIPE-010. Location: Sector E.
+Component ID: PIPE-010. Type: Carbon Steel Pipe. Status: Operational. Connected to: VALVE-005, PROCESS-UNIT-001. Location: Sectors E-F.
+Component ID: PROCESS-UNIT-001. Type: Reaction Vessel. Status: Operating. Connected to: PIPE-010, PIPE-011. Location: Sector F.
+Component ID: PIPE-011. Type: Stainless Steel Pipe. Status: Operational. Connected to: PROCESS-UNIT-001, VALVE-006. Location: Sector F.
+Component ID: VALVE-006. Type: Ball Valve. Status: Open. Connected to: PIPE-011, TANK-C. Location: Sector F.
+Component ID: TANK-C. Type: Product Storage Tank. Status: In Service. Connected to: VALVE-006. Location: Sector F.
