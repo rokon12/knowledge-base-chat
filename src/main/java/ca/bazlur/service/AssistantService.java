@@ -1,11 +1,14 @@
 package ca.bazlur.service;
 
+import ca.bazlur.config.AIProvider;
 import ca.bazlur.config.ConfigProvider;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
@@ -56,11 +59,12 @@ public class AssistantService {
    * allow overriding in tests.
    */
   protected void initialize() {
-    logger.info("Initializing OpenAI Chat Model...");
+    AIProvider provider = config.getAIProvider();
+    logger.info("Initializing {} Chat Model...", provider);
     ChatLanguageModel chatModel = createChatModel();
     logger.info("Chat Model initialized.");
 
-    logger.info("Initializing OpenAI Embedding Model...");
+    logger.info("Initializing {} Embedding Model...", provider);
     EmbeddingModel embeddingModel = createEmbeddingModel();
     logger.info("Embedding Model initialized.");
 
@@ -87,12 +91,21 @@ public class AssistantService {
    * @return The configured chat model
    */
   private ChatLanguageModel createChatModel() {
-    return OpenAiChatModel.builder()
-        .apiKey(config.getApiKey())
-        .modelName(config.getChatModelName())
-        .logRequests(config.isLogRequests())
-        .logResponses(config.isLogResponses())
-        .build();
+    if (config.getAIProvider() == AIProvider.OPENAI) {
+      return OpenAiChatModel.builder()
+          .apiKey(config.getApiKey())
+          .modelName(config.getChatModelName())
+          .logRequests(config.isLogRequests())
+          .logResponses(config.isLogResponses())
+          .build();
+    } else {
+      return OllamaChatModel.builder()
+          .baseUrl(config.getBaseUrl())
+          .modelName(config.getChatModelName())
+          .logRequests(config.isLogRequests())
+          .logResponses(config.isLogResponses())
+          .build();
+    }
   }
 
   /**
@@ -101,12 +114,21 @@ public class AssistantService {
    * @return The configured embedding model
    */
   private EmbeddingModel createEmbeddingModel() {
-    return OpenAiEmbeddingModel.builder()
-        .apiKey(config.getApiKey())
-        .modelName(config.getEmbeddingModelName())
-        .logRequests(config.isLogRequests())
-        .logResponses(config.isLogResponses())
-        .build();
+    if (config.getAIProvider() == AIProvider.OPENAI) {
+      return OpenAiEmbeddingModel.builder()
+          .apiKey(config.getApiKey())
+          .modelName(config.getEmbeddingModelName())
+          .logRequests(config.isLogRequests())
+          .logResponses(config.isLogResponses())
+          .build();
+    } else {
+      return OllamaEmbeddingModel.builder()
+          .baseUrl(config.getBaseUrl())
+          .modelName(config.getEmbeddingModelName())
+          .logRequests(config.isLogRequests())
+          .logResponses(config.isLogResponses())
+          .build();
+    }
   }
 
   /**

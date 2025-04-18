@@ -1,6 +1,6 @@
 # Knowledge Base Chat
 
-A Java application that provides an interactive chat interface to query an industrial system knowledge base using AI. The application uses LangChain4j and OpenAI models to provide intelligent responses based on the knowledge base data.
+A Java application that provides an interactive chat interface to query an industrial system knowledge base using AI. The application uses LangChain4j with support for both OpenAI and Ollama models to provide intelligent responses based on the knowledge base data.
 
 ## Features
 
@@ -14,7 +14,9 @@ A Java application that provides an interactive chat interface to query an indus
 
 - Java 21 or higher
 - Maven 3.6 or higher
-- OpenAI API key (or use "demo" for testing)
+- One of the following:
+  - OpenAI API key (or use "demo" for testing)
+  - Ollama running locally (default: http://localhost:11434)
 
 ## Installation
 
@@ -29,10 +31,16 @@ A Java application that provides an interactive chat interface to query an indus
    mvn clean package
    ```
 
-3. Set your OpenAI API key (optional):
+3. Choose your AI provider:
+
+   For OpenAI:
    ```
    export OPENAI_API_KEY=your_api_key_here
    ```
+
+   For Ollama:
+   - Make sure Ollama is running locally (default: http://localhost:11434)
+   - Edit `application.properties` to set `ai.provider=OLLAMA`
 
 ## Usage
 
@@ -56,6 +64,13 @@ Type `exit` to end the session.
 
 The application can be configured through the `src/main/resources/application.properties` file:
 
+#### AI Provider Selection
+```properties
+# AI Provider Configuration
+# Options: OPENAI, OLLAMA
+ai.provider=OPENAI
+```
+
 #### OpenAI API Configuration
 ```properties
 # OpenAI API Configuration
@@ -65,6 +80,16 @@ openai.chat.model=gpt-3.5-turbo
 openai.embedding.model=text-embedding-ada-002
 openai.log.requests=true
 openai.log.responses=true
+```
+
+#### Ollama API Configuration
+```properties
+# Ollama API Configuration
+ollama.base.url=http://localhost:11434
+ollama.chat.model=llama2
+ollama.embedding.model=nomic-embed-text
+ollama.log.requests=true
+ollama.log.responses=true
 ```
 
 #### Content Retriever Configuration
@@ -115,6 +140,7 @@ knowledge-base-chat/
 │   │   │       └── bazlur/
 │   │   │           ├── KnowledgeAssistant.java
 │   │   │           ├── config/
+│   │   │           │   ├── AIProvider.java
 │   │   │           │   ├── AppConfig.java
 │   │   │           │   └── ConfigProvider.java
 │   │   │           └── service/
@@ -139,6 +165,7 @@ knowledge-base-chat/
 ```
 
 - `KnowledgeAssistant.java`: Main class that handles the chat interface
+- `config/AIProvider.java`: Enum defining the supported AI providers (OpenAI, Ollama)
 - `config/AppConfig.java`: Provides application configuration from properties file
 - `config/ConfigProvider.java`: Interface for configuration values to enable dependency injection
 - `service/AssistantService.java`: Service that handles the assistant functionality

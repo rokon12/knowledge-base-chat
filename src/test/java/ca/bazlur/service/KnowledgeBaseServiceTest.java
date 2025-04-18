@@ -1,5 +1,6 @@
 package ca.bazlur.service;
 
+import ca.bazlur.config.AIProvider;
 import ca.bazlur.config.ConfigProvider;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.segment.TextSegment;
@@ -33,7 +34,10 @@ class KnowledgeBaseServiceTest {
 
   @BeforeEach
   void setUp() {
+    // Default to OpenAI provider for tests
+    lenient().when(configProvider.getAIProvider()).thenReturn(AIProvider.OPENAI);
     lenient().when(configProvider.getApiKey()).thenReturn("test-api-key");
+    lenient().when(configProvider.getBaseUrl()).thenReturn("http://localhost:11434");
     lenient().when(configProvider.getEmbeddingModelName()).thenReturn("test-embedding-model");
     lenient().when(configProvider.isLogRequests()).thenReturn(false);
     lenient().when(configProvider.isLogResponses()).thenReturn(false);

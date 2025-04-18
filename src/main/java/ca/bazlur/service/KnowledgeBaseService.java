@@ -1,5 +1,6 @@
 package ca.bazlur.service;
 
+import ca.bazlur.config.AIProvider;
 import ca.bazlur.config.ConfigProvider;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentParser;
@@ -8,6 +9,7 @@ import dev.langchain4j.data.document.parser.TextDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.model.ollama.OllamaEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
@@ -103,13 +105,26 @@ public class KnowledgeBaseService {
      * @return The configured embedding model
      */
     private EmbeddingModel createEmbeddingModel() {
-        logger.info("Initializing OpenAI Embedding Model...");
-        EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
-                .apiKey(config.getApiKey())
-                .modelName(config.getEmbeddingModelName())
-                .logRequests(config.isLogRequests())
-                .logResponses(config.isLogResponses())
-                .build();
+        AIProvider provider = config.getAIProvider();
+        logger.info("Initializing {} Embedding Model...", provider);
+
+        EmbeddingModel embeddingModel;
+        if (provider == AIProvider.OPENAI) {
+            embeddingModel = OpenAiEmbeddingModel.builder()
+                    .apiKey(config.getApiKey())
+                    .modelName(config.getEmbeddingModelName())
+                    .logRequests(config.isLogRequests())
+                    .logResponses(config.isLogResponses())
+                    .build();
+        } else {
+            embeddingModel = OllamaEmbeddingModel.builder()
+                    .baseUrl(config.getBaseUrl())
+                    .modelName(config.getEmbeddingModelName())
+                    .logRequests(config.isLogRequests())
+                    .logResponses(config.isLogResponses())
+                    .build();
+        }
+
         logger.info("Embedding Model initialized.");
         return embeddingModel;
     }

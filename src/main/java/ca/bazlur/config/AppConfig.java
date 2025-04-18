@@ -19,14 +19,23 @@ public class AppConfig implements ConfigProvider {
 
     private static final Pattern ENV_VAR_PATTERN = Pattern.compile("\\$\\{([^}]+)\\}");
 
-    private static final String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo";
-    private static final String DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small";
+    // Default values for OpenAI
+    private static final String DEFAULT_OPENAI_CHAT_MODEL = "gpt-3.5-turbo";
+    private static final String DEFAULT_OPENAI_EMBEDDING_MODEL = "text-embedding-3-small";
+    private static final String DEFAULT_OPENAI_API_KEY = "demo";
+
+    // Default values for Ollama
+    private static final String DEFAULT_OLLAMA_CHAT_MODEL = "llama2";
+    private static final String DEFAULT_OLLAMA_EMBEDDING_MODEL = "nomic-embed-text";
+    private static final String DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434";
+
+    // Common default values
     private static final int DEFAULT_MAX_RESULTS = 3;
     private static final double DEFAULT_MIN_SCORE = 0.6;
     private static final int DEFAULT_CHAT_MEMORY_MESSAGES = 10;
     private static final int DEFAULT_CHUNK_SIZE = 300;
     private static final int DEFAULT_CHUNK_OVERLAP = 30;
-    private static final String DEFAULT_API_KEY = "demo";
+    private static final AIProvider DEFAULT_AI_PROVIDER = AIProvider.OPENAI;
 
     // Singleton instance for backward compatibility
     private static final AppConfig INSTANCE = new AppConfig();
@@ -86,26 +95,60 @@ public class AppConfig implements ConfigProvider {
     }
 
     @Override
+    public AIProvider getAIProvider() {
+        String providerStr = getProperty("ai.provider", DEFAULT_AI_PROVIDER.name());
+        try {
+            return AIProvider.valueOf(providerStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            logger.warn("Invalid AI provider '{}', using default: {}", providerStr, DEFAULT_AI_PROVIDER);
+            return DEFAULT_AI_PROVIDER;
+        }
+    }
+
+    @Override
     public String getChatModelName() {
-        return getProperty("openai.chat.model", DEFAULT_CHAT_MODEL);
+        if (getAIProvider() == AIProvider.OPENAI) {
+            return getProperty("openai.chat.model", DEFAULT_OPENAI_CHAT_MODEL);
+        } else {
+            return getProperty("ollama.chat.model", DEFAULT_OLLAMA_CHAT_MODEL);
+        }
     }
 
     @Override
     public String getEmbeddingModelName() {
-        return getProperty("openai.embedding.model", DEFAULT_EMBEDDING_MODEL);
+        if (getAIProvider() == AIProvider.OPENAI) {
+            return getProperty("openai.embedding.model", DEFAULT_OPENAI_EMBEDDING_MODEL);
+        } else {
+            return getProperty("ollama.embedding.model", DEFAULT_OLLAMA_EMBEDDING_MODEL);
+        }
     }
 
     @Override
     public String getApiKey() {
-        String apiKey = getProperty("openai.api.key", DEFAULT_API_KEY);
-        if (DEFAULT_API_KEY.equals(apiKey)) {
-            logger.warn("Using default API key for OpenAI. Please set 'openai.api.key' in application.properties or the corresponding environment variable.");
-        }
-        if (apiKey == null || apiKey.trim().isEmpty()) {
-            logger.error("OpenAI API Key is missing or empty. Please set 'openai.api.key' in application.properties or the corresponding environment variable.");
+        if (getAIProvider() == AIProvider.OPENAI) {
+            String apiKey = getProperty("openai.api.key", DEFAULT_OPENAI_API_KEY);
+            if (DEFAULT_OPENAI_API_KEY.equals(apiKey)) {
+                logger.warn("Using default API key for OpenAI. Please set 'openai.api.key' in application.properties or the corresponding environment variable.");
+            }
+            if (apiKey == null || apiKey.trim().isEmpty()) {
+                logger.error("OpenAI API Key is missing or empty. Please set 'openai.api.key' in application.properties or the corresponding environment variable.");
+                return null;
+            }
+            return apiKey;
+        } else {
+            // Ollama doesn't require an API key
             return null;
         }
-        return apiKey;
+    }
+
+    @Override
+    public String getBaseUrl() {
+        if (getAIProvider() == AIProvider.OLLAMA) {
+            return getProperty("ollama.base.url", DEFAULT_OLLAMA_BASE_URL);
+        } else {
+            // OpenAI doesn't use a base URL in the same way
+            return null;
+        }
     }
 
     @Override
@@ -135,12 +178,20 @@ public class AppConfig implements ConfigProvider {
 
     @Override
     public boolean isLogRequests() {
-        return getBooleanProperty("openai.log.requests", false);
+        if (getAIProvider() == AIProvider.OPENAI) {
+            return getBooleanProperty("openai.log.requests", false);
+        } else {
+            return getBooleanProperty("ollama.log.requests", false);
+        }
     }
 
     @Override
     public boolean isLogResponses() {
-        return getBooleanProperty("openai.log.responses", false);
+        if (getAIProvider() == AIProvider.OPENAI) {
+            return getBooleanProperty("openai.log.responses", false);
+        } else {
+            return getBooleanProperty("ollama.log.responses", false);
+        }
     }
 
     /**
